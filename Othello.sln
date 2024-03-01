@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Othello.Models", "Othello.Models\Othello.Models.csproj", "{DDD84485-46EC-4059-B927-901718244C91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Othello.Views", "Othello.Views\Othello.Views.csproj", "{2D1C4B30-6538-400E-A907-2FF221716599}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Othello.Controllers", "Othello.Controllers\Othello.Controllers.csproj", "{86507374-F08F-4E02-84B2-CC17D21FADD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Othello.Tests", "Othello.Tests\Othello.Tests.csproj", "{D04C8A14-04EF-44C2-B53C-EA0C5655E022}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Othello.ConsoleApp", "Othello.ConsoleApp\Othello.ConsoleApp.csproj", "{40E05CAD-709E-4136-A9F6-02BD76491185}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DDD84485-46EC-4059-B927-901718244C91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDD84485-46EC-4059-B927-901718244C91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDD84485-46EC-4059-B927-901718244C91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDD84485-46EC-4059-B927-901718244C91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D1C4B30-6538-400E-A907-2FF221716599}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D1C4B30-6538-400E-A907-2FF221716599}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D1C4B30-6538-400E-A907-2FF221716599}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D1C4B30-6538-400E-A907-2FF221716599}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86507374-F08F-4E02-84B2-CC17D21FADD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86507374-F08F-4E02-84B2-CC17D21FADD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86507374-F08F-4E02-84B2-CC17D21FADD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86507374-F08F-4E02-84B2-CC17D21FADD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D04C8A14-04EF-44C2-B53C-EA0C5655E022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D04C8A14-04EF-44C2-B53C-EA0C5655E022}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D04C8A14-04EF-44C2-B53C-EA0C5655E022}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D04C8A14-04EF-44C2-B53C-EA0C5655E022}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40E05CAD-709E-4136-A9F6-02BD76491185}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40E05CAD-709E-4136-A9F6-02BD76491185}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40E05CAD-709E-4136-A9F6-02BD76491185}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40E05CAD-709E-4136-A9F6-02BD76491185}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
