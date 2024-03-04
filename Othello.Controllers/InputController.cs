@@ -8,7 +8,7 @@ namespace Othello.Controllers
         {
             while (true)
             {
-                Console.WriteLine("Enter your move (row col): ");
+                //Console.WriteLine("Enter your move (row col): ");
                 var input = Console.ReadLine();
                 var parts = input?.Split();
 

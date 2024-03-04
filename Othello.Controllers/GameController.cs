@@ -17,21 +17,31 @@ namespace Othello.Controllers
         public void StartGame()
         {
             _game.Start();
+            // Display the initial state of the board.
+            // This can be done by calling a method on the view directly or through the game notifying its observers.
+
             while (!_game.IsGameOver)
             {
+                // _game.UpdateBoardView(); // Update the board view at the start of each turn.
                 var currentPlayer = _game.CurrentPlayer;
+        
+                Console.WriteLine($"Player {currentPlayer.Color}'s turn. Please enter your move (row col):");
                 var move = _inputController.GetMoveInput();
 
-                // MakeMove internally checks for validity and notifies observers if invalid.
-                var moveMade = _game.MakeMove(move.Item1, move.Item2);
-                if (!moveMade)
+                if (_game.MakeMove(move.Item2, move.Item1))
                 {
-                    // The notification for invalid move is handled within the Game class.
-                    continue;
+                    // Move was successful, check for game over or switch turns.
+                    if (_game.CheckGameOver()) // This method needs to be implemented.
+                    {
+                        _game.EndGame();
+                        return;
+                    }
                 }
-
-                // Any additional logic needed after a successful move.
-                
+                else
+                {
+                    // Invalid move, the notification is handled within the Game class.
+                    continue; // Prompt the same player to enter a valid move.
+                }
             }
         }
     }

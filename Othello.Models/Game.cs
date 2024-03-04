@@ -26,27 +26,10 @@ namespace Othello.Models
         {
             IsGameOver = false;
             Winner = null;
-            // Board.InitializeBoard(); // Ensure the board is in starting configuration
             CurrentPlayer = DecideStartingPlayer();
-
-            while (!IsGameOver)
-            {
-                if (!PlayerCanMove(CurrentPlayer) && !PlayerCanMove(OpponentPlayer))
-                {
-                    EndGame();
-                    break;
-                }
-
-                if (!PlayerCanMove(CurrentPlayer))
-                {
-                    Console.WriteLine($"Player {CurrentPlayer.Color} has no valid moves and will be skipped.");
-                    SwitchTurns();
-                    continue;
-                }
-                // Here, you would typically prompt the current player to make a move,
-                // which might involve updating the game board and then switching turns.
-                // This loop structure is just a conceptual demonstration.
-            }
+            // Optionally, notify the observers (view) to display the initial game state.
+            NotifyObservers("Game has started. Board is initialized.");
+            UpdateBoardView(); // Assuming this method notifies the view to display the board.
         }
 
         public bool MakeMove(int row, int col)
@@ -58,6 +41,7 @@ namespace Othello.Models
             }
             
             Board.MakeMove(row, col, CurrentPlayer.Color);
+            UpdateBoardView();
             // Board.FlipPieces(row, col, CurrentPlayer.Color);
             SwitchTurns();
             return true;
@@ -103,8 +87,25 @@ namespace Othello.Models
 
             return false;
         }
+        public bool CheckGameOver()
+        {
+            // The game is over if neither player can make a valid move
+            bool currentPlayerCanMove = PlayerCanMove(CurrentPlayer);
+            bool opponentPlayerCanMove = PlayerCanMove(OpponentPlayer);
 
-        private void EndGame()
+            if (!currentPlayerCanMove && !opponentPlayerCanMove)
+            {
+                IsGameOver = true;
+            }
+            else
+            {
+                IsGameOver = false;
+            }
+
+            return IsGameOver;
+        }
+
+        public void EndGame()
         {
             IsGameOver = true;
             var finalScore = CalculateScore();
@@ -145,5 +146,17 @@ namespace Othello.Models
                 observer.Update(message);
             }
         }
+        public void UpdateBoardView()
+        {
+            var boardState = Board.Cells; // Assuming Board.Cells is accessible
+            foreach (var observer in _observers)
+            {
+                if (observer is { } consoleView)
+                {
+                    consoleView.DisplayBoard(boardState);
+                }
+            }
+        }
+
     }
 }
