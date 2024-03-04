@@ -23,8 +23,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Othello.Controllers\Othello.Controllers.csproj" />
-      <ProjectReference Include="..\Othello.Models\Othello.Models.csproj" />
+        <ProjectReference Include="..\Othello.Controllers\Othello.Controllers.csproj"/>
+        <ProjectReference Include="..\Othello.Models\Othello.Models.csproj"/>
     </ItemGroup>
 
 </Project>
