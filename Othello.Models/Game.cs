@@ -104,13 +104,15 @@ namespace Othello.Models
 
             return IsGameOver;
         }
-
+        
         public void EndGame()
         {
             IsGameOver = true;
+            DetermineWinner(); // Determine the winner before constructing the game over message
+    
             var finalScore = CalculateScore();
-
             var gameOverMessage = $"Game Over\nScore - Black: {finalScore[CellState.Black]}, White: {finalScore[CellState.White]}";
+
             if (Winner != null)
             {
                 gameOverMessage += $"\nWinner is {Winner.Color}";
@@ -122,6 +124,7 @@ namespace Othello.Models
 
             NotifyObservers(gameOverMessage);
         }
+
 
         private Player DecideStartingPlayer()
         {
@@ -138,7 +141,8 @@ namespace Othello.Models
         {
             _observers.Remove(observer);
         }
-
+        // Rewrite to one IGameViewUpdater
+        
         protected void NotifyObservers(string message)
         {
             foreach (var observer in _observers)
@@ -157,6 +161,24 @@ namespace Othello.Models
                 }
             }
         }
+        private void DetermineWinner()
+        {
+            var finalScore = CalculateScore();
+            if (finalScore[CellState.Black] > finalScore[CellState.White])
+            {
+                Winner = CurrentPlayer.Color == CellState.Black ? CurrentPlayer : OpponentPlayer;
+            }
+            else if (finalScore[CellState.White] > finalScore[CellState.Black])
+            {
+                Winner = CurrentPlayer.Color == CellState.White ? CurrentPlayer : OpponentPlayer;
+            }
+            else
+            {
+                // It's a tie if scores are equal
+                Winner = null;
+            }
+        }
+
 
     }
 }

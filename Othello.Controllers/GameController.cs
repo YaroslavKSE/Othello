@@ -28,7 +28,7 @@ namespace Othello.Controllers
                 Console.WriteLine($"Player {currentPlayer.Color}'s turn. Please enter your move (row col):");
                 var move = _inputController.GetMoveInput();
 
-                if (_game.MakeMove(move.Item2, move.Item1))
+                if (_game.MakeMove(move.Item2 - 1, move.Item1 - 1))
                 {
                     // Move was successful, check for game over or switch turns.
                     if (_game.CheckGameOver()) // This method needs to be implemented.

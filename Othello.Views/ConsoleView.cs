@@ -9,12 +9,28 @@ public class ConsoleView : IGameViewUpdater
     {
         Console.WriteLine(message);
     }
-
+    // Update DisplayBoard to have a function as an argument, and then check if it null, then it will display regular board, if not display hints.
     public void DisplayBoard(CellState[,] board)
     {
-        for (int row = 0; row < board.GetLength(0); row++)
+        int size = board.GetLength(0); // Assuming the board is square
+
+        // Display the top border
+        Console.Write("   "); // Space for row numbers
+        for (int col = 0; col < size; col++)
         {
-            for (int col = 0; col < board.GetLength(1); col++)
+            Console.Write($"  {col + 1}"); // Display column numbers as coordinates
+        }
+        Console.WriteLine();
+
+        Console.Write("    "); // Align with the board
+        Console.WriteLine(new string('=', size * 3)); // Top border based on board size
+
+        for (int row = 0; row < size; row++)
+        {
+            // Display row numbers as coordinates, right aligned
+            Console.Write($"{row + 1}".PadLeft(2) + " |"); // PadLeft for alignment
+
+            for (int col = 0; col < size; col++)
             {
                 var cell = board[row, col];
                 char symbol = cell switch
@@ -23,11 +39,16 @@ public class ConsoleView : IGameViewUpdater
                     CellState.White => 'W',
                     _ => '-'
                 };
-                Console.Write($"{symbol} ");
+                Console.Write($" {symbol} "); // Display the cell state with spaces for readability
             }
-            Console.WriteLine();
+
+            Console.WriteLine("|"); // Right border
         }
+
+        Console.Write("    "); // Align with the board
+        Console.WriteLine(new string('=', size * 3)); // Bottom border based on board size
     }
+
 
     // Additional methods to interact with the user can be added here
     // For example, displaying the board, showing error messages, etc.
