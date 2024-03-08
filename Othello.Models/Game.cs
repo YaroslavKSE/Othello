@@ -10,16 +10,17 @@ namespace Othello.Models
         public bool IsGameOver { get; private set; }
         public Player Winner { get; private set; }
         
-        private readonly List<IGameViewUpdater> _observers = new();
+        private readonly IGameViewUpdater _observer;
 
 
         public Dictionary<CellState, int> Score => CalculateScore();
 
-        public Game(Player player1, Player player2)
+        public Game(Player player1, Player player2, IGameViewUpdater observer)
         {
             Board = new Board();
             CurrentPlayer = player1;
             OpponentPlayer = player2;
+            _observer = observer;
         }
 
         public void Start()
@@ -27,9 +28,9 @@ namespace Othello.Models
             IsGameOver = false;
             Winner = null;
             CurrentPlayer = DecideStartingPlayer();
-            // Optionally, notify the observers (view) to display the initial game state.
             NotifyObservers("Game has started. Board is initialized.");
-            UpdateBoardView(); // Assuming this method notifies the view to display the board.
+            UpdateBoardView(); 
+            NotifyObservers($"Player {CurrentPlayer.Color}'s turn. Please enter your move (row col):");
         }
 
         public bool MakeMove(int row, int col)
@@ -48,8 +49,9 @@ namespace Othello.Models
         }
 
         private void SwitchTurns()
-        {
+        {   
             (CurrentPlayer, OpponentPlayer) = (OpponentPlayer, CurrentPlayer);
+            NotifyObservers($"Player {CurrentPlayer.Color}'s turn. Please enter your move (row col):");
         }
 
         private Dictionary<CellState, int> CalculateScore()
@@ -132,35 +134,16 @@ namespace Othello.Models
             return CurrentPlayer.Color == CellState.Black ? CurrentPlayer : OpponentPlayer;
         }
         
-        public void RegisterObserver(IGameViewUpdater observer)
-        {
-            _observers.Add(observer);
-        }
-
-        public void DeregisterObserver(IGameViewUpdater observer)
-        {
-            _observers.Remove(observer);
-        }
-        // Rewrite to one IGameViewUpdater
-        
         protected void NotifyObservers(string message)
         {
-            foreach (var observer in _observers)
-            {
-                observer.Update(message);
-            }
+            _observer.Update(message);
         }
         public void UpdateBoardView()
         {
             var boardState = Board.Cells; // Assuming Board.Cells is accessible
-            foreach (var observer in _observers)
-            {
-                if (observer is { } consoleView)
-                {
-                    consoleView.DisplayBoard(boardState);
-                }
-            }
+            _observer.DisplayBoard(boardState);
         }
+        
         private void DetermineWinner()
         {
             var finalScore = CalculateScore();

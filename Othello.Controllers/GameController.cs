@@ -17,31 +17,40 @@ namespace Othello.Controllers
         public void StartGame()
         {
             _game.Start();
-            // Display the initial state of the board.
-            // This can be done by calling a method on the view directly or through the game notifying its observers.
 
             while (!_game.IsGameOver)
             {
-                // _game.UpdateBoardView(); // Update the board view at the start of each turn.
                 var currentPlayer = _game.CurrentPlayer;
-        
-                Console.WriteLine($"Player {currentPlayer.Color}'s turn. Please enter your move (row col):");
-                var move = _inputController.GetMoveInput();
+                
+                switch (currentPlayer)
+                {
+                    // Check the type of the current player to decide on the move source
+                    case HumanPlayer:
+                        var move = _inputController.GetMoveInput();
+                        _game.MakeMove(move.Item1 - 1, move.Item2 - 1);
+                        break;
+                    case AIBot:
+                        // For AIBot, the move is generated within the MakeMove method itself
+                        var (row, col) = currentPlayer.MakeMove(_game.Board);
+                        _game.MakeMove(row, col);
+                        break;
+                }
+                if (_game.CheckGameOver()) 
+                {
+                    _game.EndGame();
+                    return;
+                }
 
-                if (_game.MakeMove(move.Item2 - 1, move.Item1 - 1))
-                {
-                    // Move was successful, check for game over or switch turns.
-                    if (_game.CheckGameOver()) // This method needs to be implemented.
-                    {
-                        _game.EndGame();
-                        return;
-                    }
-                }
-                else
-                {
-                    // Invalid move, the notification is handled within the Game class.
-                    continue; // Prompt the same player to enter a valid move.
-                }
+                // if (_game.MakeMove(move.Item2 - 1, move.Item1 - 1))
+                // {
+                //     // Move was successful, check for game over or switch turns.
+                //     if (_game.CheckGameOver()) 
+                //     {
+                //         _game.EndGame();
+                //         return;
+                //     }
+                // }
+                
             }
         }
     }
