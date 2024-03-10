@@ -31,7 +31,9 @@ namespace Othello.Controllers
                         break;
                     case AIBot:
                         // For AIBot, the move is generated within the MakeMove method itself
+                        SimulateAiDelay(); // Simulate AI thinking delay
                         var (row, col) = currentPlayer.MakeMove(_game.Board);
+                        // Console.WriteLine($"AI Bot {currentPlayer.Color} makes a move: {row + 1} {col + 1}");
                         _game.MakeMove(row, col);
                         break;
                 }
@@ -41,17 +43,16 @@ namespace Othello.Controllers
                     _game.EndGame();
                     return;
                 }
-
-                // if (_game.MakeMove(move.Item2 - 1, move.Item1 - 1))
-                // {
-                //     // Move was successful, check for game over or switch turns.
-                //     if (_game.CheckGameOver()) 
-                //     {
-                //         _game.EndGame();
-                //         return;
-                //     }
-                // }
             }
+        }
+
+        public void SimulateAiDelay()
+        {
+            // Introduce a random delay between 1 and 3 seconds
+            Random rand = new Random();
+            int delay = rand.Next(1000, 3001); // Milliseconds
+            // Console.WriteLine("AI is thinking...");
+            Task.Delay(delay).Wait(); // Use await Task.Delay(delay) in async methods
         }
     }
 }
