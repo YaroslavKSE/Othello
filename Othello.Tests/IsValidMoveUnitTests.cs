@@ -27,7 +27,7 @@ public class IsValidMoveUnitTests
         var result = board.IsValidMove(2, 3, CellState.Black);
         Assert.False(result, "This is a not valid move for Black because White[3, 4] is not bracketed");
     }
-    
+
     [Fact]
     public void IsValidMoveReturnsFalseIfBlackGoes_X0_Y0_When_GameIsStarted()
     {
@@ -35,7 +35,7 @@ public class IsValidMoveUnitTests
         var result = board.IsValidMove(0, 0, CellState.Black);
         Assert.False(result, "This is a not valid move for Black because White[3, 4] is not bracketed");
     }
-    
+
     [Fact]
     public void IsValidMoveReturnsTrueIfWhiteGoes_X4_Y5_When_GameIsStarted()
     {

@@ -41,12 +41,12 @@
             Cells[midPoint - 1, midPoint] = CellState.White;
             Cells[midPoint, midPoint - 1] = CellState.White;
         }
-        
+
         private readonly (int, int)[] _directions = new (int, int)[]
         {
             (-1, -1), (-1, 0), (-1, 1), // Upper row
             (0, -1), /*(0, 0),*/ (0, 1), // Middle row
-            (1, -1), (1, 0), (1, 1)  // Lower row
+            (1, -1), (1, 0), (1, 1) // Lower row
         };
 
         public void MakeMove(int x, int y, CellState playerColor)
@@ -65,12 +65,12 @@
             {
                 throw new ArgumentException("Invalid player color.");
             }
-            
+
             if (!IsValidMove(x, y, playerColor))
             {
                 throw new InvalidOperationException("This move is invalid.");
             }
-            
+
             Cells[x, y] = playerColor; // Place the player's piece on the board
             FlipPieces(x, y, playerColor);
         }
@@ -133,6 +133,7 @@
                         {
                             Cells[flipX, flipY] = playerColor; // Flip the piece
                         }
+
                         break; // Completed flipping for this direction
                     }
                     else
@@ -145,6 +146,5 @@
                 }
             }
         }
-        
     }
 }

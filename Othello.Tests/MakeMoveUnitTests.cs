@@ -30,6 +30,6 @@ public class MakeMoveUnitTests
         // Act & Assert
         Assert.Throws<InvalidOperationException>(() => board.MakeMove(0, 0, playerColor));
     }
-        // Add more tests as needed to cover various scenarios and edge cases,
-        // such as making moves on the edge of the board, making moves that don't flip any pieces, etc.
+    // Add more tests as needed to cover various scenarios and edge cases,
+    // such as making moves on the edge of the board, making moves that don't flip any pieces, etc.
 }

@@ -12,9 +12,9 @@ namespace Othello.Controllers
                 var input = Console.ReadLine();
                 var parts = input?.Split();
 
-                if (parts != null && parts.Length == 2
-                                  && int.TryParse(parts[0], out int row)
-                                  && int.TryParse(parts[1], out int col))
+                if (parts is {Length: 2}
+                    && int.TryParse(parts[0], out int row)
+                    && int.TryParse(parts[1], out int col))
                 {
                     return (row, col);
                 }
@@ -35,9 +35,24 @@ namespace Othello.Controllers
                 {
                     return input;
                 }
+
+                Console.WriteLine("Invalid input, please select 1 or 2.");
+            }
+        }
+
+        public bool AskPlayAgain()
+        {
+            Console.WriteLine("Do you want to play another game? (yes/no)");
+            while (true)
+            {
+                var response = Console.ReadLine();
+                if (response == null)
+                {
+                    Console.WriteLine("Invalid input, please select from (yes/no)");
+                }
                 else
                 {
-                    Console.WriteLine("Invalid input, please select 1 or 2.");
+                    return response.Trim().StartsWith("y", StringComparison.CurrentCultureIgnoreCase);
                 }
             }
         }

@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Othello.Controllers\Othello.Controllers.csproj" />
-      <ProjectReference Include="..\Othello.Views\Othello.Views.csproj" />
+        <ProjectReference Include="..\Othello.Controllers\Othello.Controllers.csproj"/>
+        <ProjectReference Include="..\Othello.Views\Othello.Views.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Othello.Models\Othello.Models.csproj" />
+        <ProjectReference Include="..\Othello.Models\Othello.Models.csproj"/>
     </ItemGroup>
 
 </Project>

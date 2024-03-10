@@ -9,6 +9,7 @@ public class ConsoleView : IGameViewUpdater
     {
         Console.WriteLine(message);
     }
+
     // Update DisplayBoard to have a function as an argument, and then check if it null, then it will display regular board, if not display hints.
     public void DisplayBoard(CellState[,] board)
     {
@@ -20,6 +21,7 @@ public class ConsoleView : IGameViewUpdater
         {
             Console.Write($"  {col + 1}"); // Display column numbers as coordinates
         }
+
         Console.WriteLine();
 
         Console.Write("    "); // Align with the board

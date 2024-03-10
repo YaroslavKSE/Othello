@@ -2,7 +2,9 @@
 {
     public class HumanPlayer : Player
     {
-        public HumanPlayer(CellState color) : base(color) { }
+        public HumanPlayer(CellState color) : base(color)
+        {
+        }
 
         public override (int, int) MakeMove(Board board)
         {

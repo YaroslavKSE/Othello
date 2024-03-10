@@ -9,7 +9,7 @@ namespace Othello.Models
         public Player OpponentPlayer { get; private set; }
         public bool IsGameOver { get; private set; }
         public Player Winner { get; private set; }
-        
+
         private readonly IGameViewUpdater _observer;
 
 
@@ -29,7 +29,7 @@ namespace Othello.Models
             Winner = null;
             CurrentPlayer = DecideStartingPlayer();
             NotifyObservers("Game has started. Board is initialized.");
-            UpdateBoardView(); 
+            UpdateBoardView();
             NotifyObservers($"Player {CurrentPlayer.Color}'s turn. Please enter your move (row col):");
         }
 
@@ -40,7 +40,7 @@ namespace Othello.Models
                 NotifyObservers("Invalid move, try again");
                 return false;
             }
-            
+
             Board.MakeMove(row, col, CurrentPlayer.Color);
             UpdateBoardView();
             // Board.FlipPieces(row, col, CurrentPlayer.Color);
@@ -49,9 +49,9 @@ namespace Othello.Models
         }
 
         private void SwitchTurns()
-        {   
+        {
             (CurrentPlayer, OpponentPlayer) = (OpponentPlayer, CurrentPlayer);
-            NotifyObservers($"Player {CurrentPlayer.Color}'s turn. Please enter your move (row col):");
+            NotifyPlayerTurn(CurrentPlayer);
         }
 
         private Dictionary<CellState, int> CalculateScore()
@@ -89,6 +89,7 @@ namespace Othello.Models
 
             return false;
         }
+
         public bool CheckGameOver()
         {
             // The game is over if neither player can make a valid move
@@ -106,14 +107,15 @@ namespace Othello.Models
 
             return IsGameOver;
         }
-        
+
         public void EndGame()
         {
             IsGameOver = true;
             DetermineWinner(); // Determine the winner before constructing the game over message
-    
+
             var finalScore = CalculateScore();
-            var gameOverMessage = $"Game Over\nScore - Black: {finalScore[CellState.Black]}, White: {finalScore[CellState.White]}";
+            var gameOverMessage =
+                $"Game Over\nScore - Black: {finalScore[CellState.Black]}, White: {finalScore[CellState.White]}";
 
             if (Winner != null)
             {
@@ -133,17 +135,31 @@ namespace Othello.Models
             // Black always starts first
             return CurrentPlayer.Color == CellState.Black ? CurrentPlayer : OpponentPlayer;
         }
-        
+
         protected void NotifyObservers(string message)
         {
             _observer.Update(message);
         }
+
         public void UpdateBoardView()
         {
             var boardState = Board.Cells; // Assuming Board.Cells is accessible
             _observer.DisplayBoard(boardState);
         }
         
+        private void NotifyPlayerTurn(Player player)
+        {
+            if (player is HumanPlayer)
+            {
+                NotifyObservers($"Player {player.Color}'s turn. Please enter your move (row col):");
+            }
+            else if (player is AIBot)
+            {
+                // No need for input prompt message for AI Bot. Optionally, notify about AI thinking.
+                NotifyObservers($"AI Bot {player.Color}'s turn...");
+            }
+        }
+
         private void DetermineWinner()
         {
             var finalScore = CalculateScore();
@@ -161,7 +177,5 @@ namespace Othello.Models
                 Winner = null;
             }
         }
-
-
     }
 }

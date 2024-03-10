@@ -21,7 +21,7 @@ namespace Othello.Controllers
             while (!_game.IsGameOver)
             {
                 var currentPlayer = _game.CurrentPlayer;
-                
+
                 switch (currentPlayer)
                 {
                     // Check the type of the current player to decide on the move source
@@ -35,7 +35,8 @@ namespace Othello.Controllers
                         _game.MakeMove(row, col);
                         break;
                 }
-                if (_game.CheckGameOver()) 
+
+                if (_game.CheckGameOver())
                 {
                     _game.EndGame();
                     return;
@@ -50,7 +51,6 @@ namespace Othello.Controllers
                 //         return;
                 //     }
                 // }
-                
             }
         }
     }
