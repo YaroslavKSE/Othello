@@ -18,10 +18,8 @@ namespace Othello.Controllers
                 {
                     return (row, col);
                 }
-                else
-                {
-                    Console.WriteLine("Invalid input, please try again.");
-                }
+
+                Console.WriteLine("Invalid input, please try again.");
             }
         }
 

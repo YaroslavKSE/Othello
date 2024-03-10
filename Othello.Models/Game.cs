@@ -6,13 +6,12 @@ namespace Othello.Models
     {
         public Board Board { get; private set; }
         public Player CurrentPlayer { get; private set; }
-        public Player OpponentPlayer { get; private set; }
+        private Player OpponentPlayer { get; set; }
         public bool IsGameOver { get; private set; }
-        public Player Winner { get; private set; }
+        private Player Winner { get; set; }
 
         private readonly IGameViewUpdater _observer;
-
-
+        
         public Dictionary<CellState, int> Score => CalculateScore();
 
         public Game(Player player1, Player player2, IGameViewUpdater observer)
@@ -26,7 +25,7 @@ namespace Othello.Models
         public void Start()
         {
             IsGameOver = false;
-            Winner = null;
+            Winner = null!;
             CurrentPlayer = DecideStartingPlayer();
             NotifyObservers("Game has started. Board is initialized.");
             UpdateBoardView();
