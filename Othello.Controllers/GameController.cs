@@ -23,8 +23,8 @@ namespace Othello.Controllers
             while (!_game.IsGameOver)
             {
                 var currentPlayer = _game.CurrentPlayer;
-                stopwatch.Restart();
-                // After making a move (either by player or AI)
+                // stopwatch.Restart();
+                // // After making a move (either by player or AI)
                 switch (currentPlayer)
                 {
                     // Check the type of the current player to decide on the move source
@@ -34,7 +34,7 @@ namespace Othello.Controllers
                         stopwatch.Restart();
                         if (stopwatch.ElapsedMilliseconds <= 3000)
                         {
-                            Console.WriteLine("Move made. You have got 3 seconds to undo. \nPress 'U' to undo.");
+                            //Console.WriteLine("Move made. You have got 3 seconds to undo. \nPress 'U' to undo.");
                             bool undoRequested = await WaitForUndoRequest(3000);
                             if (undoRequested)
                             {
