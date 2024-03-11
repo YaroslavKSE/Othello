@@ -2,6 +2,7 @@
 
 public interface IGameController
 {
-    void StartGame();
+    Task StartGame();
     void SimulateAiDelay();
+    Task<bool> WaitForUndoRequest(int timeout);
 }

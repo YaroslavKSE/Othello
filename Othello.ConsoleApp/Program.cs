@@ -36,8 +36,8 @@ while (playAgain)
     GameController gameController = new GameController(game, inputController);
 
     // Start the game loop
-    gameController.StartGame();
-    
+    await gameController.StartGame();
+
     // Ask if the user wants to play again
     playAgain = inputController.AskPlayAgain();
 }

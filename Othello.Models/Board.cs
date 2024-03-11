@@ -42,7 +42,7 @@
             Cells[midPoint, midPoint - 1] = CellState.White;
         }
 
-        private readonly (int, int)[] _directions = new (int, int)[]
+        private readonly (int, int)[] _directions =
         {
             (-1, -1), (-1, 0), (-1, 1), // Upper row
             (0, -1), /*(0, 0),*/ (0, 1), // Middle row
@@ -144,6 +144,50 @@
                     currentX += dx;
                     currentY += dy;
                 }
+            }
+        }
+
+        public List<(int, int)> CalculateFlips(int row, int col, CellState playerColor)
+        {
+            List<(int, int)> flippedPieces = new List<(int, int)>();
+            CellState opponentColor = playerColor == CellState.Black ? CellState.White : CellState.Black;
+
+            foreach (var (dx, dy) in _directions)
+            {
+                int currentX = row + dx;
+                int currentY = col + dy;
+                List<(int, int)> piecesToFlip = new List<(int, int)>();
+
+                while (currentX >= 0 && currentX < Size && currentY >= 0 && currentY < Size
+                       && Cells[currentX, currentY] == opponentColor)
+                {
+                    piecesToFlip.Add((currentX, currentY));
+                    currentX += dx;
+                    currentY += dy;
+                }
+
+                // Check if at the end of the line there is a piece of the current player's color
+                if (currentX >= 0 && currentX < Size && currentY >= 0 && currentY < Size
+                    && Cells[currentX, currentY] == playerColor)
+                {
+                    flippedPieces.AddRange(piecesToFlip);
+                }
+            }
+
+            return flippedPieces;
+        }
+
+        public void UndoMove(Move move)
+        {
+            // Revert the last move using the information stored in the Move object
+            // This includes setting the last moved position back to its original state and flipping back the flipped pieces
+            Cells[move.Row, move.Col] =
+                CellState.Empty; // Assuming the original state is always empty, adjust if necessary
+
+            // Revert flips
+            foreach (var (flipRow, flipCol) in move.FlippedPieces)
+            {
+                Cells[flipRow, flipCol] = move.PlayerColor == CellState.Black ? CellState.White : CellState.Black;
             }
         }
     }

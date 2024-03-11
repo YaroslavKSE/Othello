@@ -1,4 +1,5 @@
-﻿using Othello.Controllers.Interfaces;
+﻿using System.Diagnostics;
+using Othello.Controllers.Interfaces;
 using Othello.Models;
 
 namespace Othello.Controllers
@@ -14,20 +15,33 @@ namespace Othello.Controllers
             _inputController = inputController;
         }
 
-        public void StartGame()
+        public async Task StartGame()
         {
             _game.Start();
+            Stopwatch stopwatch = new Stopwatch();
 
             while (!_game.IsGameOver)
             {
                 var currentPlayer = _game.CurrentPlayer;
-
+                stopwatch.Restart();
+                // After making a move (either by player or AI)
                 switch (currentPlayer)
                 {
                     // Check the type of the current player to decide on the move source
                     case HumanPlayer:
                         var move = _inputController.GetMoveInput();
                         _game.MakeMove(move.Item1 - 1, move.Item2 - 1);
+                        stopwatch.Restart();
+                        if (stopwatch.ElapsedMilliseconds <= 3000)
+                        {
+                            Console.WriteLine("Move made. You have got 3 seconds to undo. \nPress 'U' to undo.");
+                            bool undoRequested = await WaitForUndoRequest(3000);
+                            if (undoRequested)
+                            {
+                                _game.UndoMove();
+                            }
+                        }
+
                         break;
                     case AIBot:
                         // For AIBot, the move is generated within the MakeMove method itself
@@ -53,6 +67,46 @@ namespace Othello.Controllers
             int delay = rand.Next(1000, 3001); // Milliseconds
             // Console.WriteLine("AI is thinking...");
             Task.Delay(delay).Wait(); // Use await Task.Delay(delay) in async methods
+        }
+
+        public async Task<bool> WaitForUndoRequest(int timeout)
+        {
+            var cancellationTokenSource = new CancellationTokenSource();
+            var token = cancellationTokenSource.Token;
+
+            var undoTask = Task.Run(() =>
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    if (Console.KeyAvailable)
+                    {
+                        var key = Console.ReadKey(true).Key;
+                        if (key == ConsoleKey.U) // Let 'U' be the undo command
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }, token);
+
+            // Delay for the specified timeout
+            await Task.Delay(timeout, token).ContinueWith(t => { }, token);
+
+            // If we reach here, the delay has completed. Cancel the undoTask.
+            await cancellationTokenSource.CancelAsync();
+
+            try
+            {
+                // If the task completed with a result before cancellation, this will return the result.
+                return await undoTask;
+            }
+            catch (TaskCanceledException)
+            {
+                // If the task was cancelled, treat it as no undo request.
+                return false;
+            }
         }
     }
 }

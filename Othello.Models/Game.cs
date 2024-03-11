@@ -11,7 +11,8 @@ namespace Othello.Models
         private Player Winner { get; set; }
 
         private readonly IGameViewUpdater _observer;
-        
+
+        private Stack<Move> moveHistory = new Stack<Move>();
         public Dictionary<CellState, int> Score => CalculateScore();
 
         public Game(Player player1, Player player2, IGameViewUpdater observer)
@@ -40,9 +41,13 @@ namespace Othello.Models
                 return false;
             }
 
+            // Before making the move on the board, calculate flipped pieces and store the move
+            List<(int, int)> flippedPieces = Board.CalculateFlips(row, col, CurrentPlayer.Color);
+            moveHistory.Push(new Move(row, col, CurrentPlayer.Color, flippedPieces));
+
             Board.MakeMove(row, col, CurrentPlayer.Color);
             UpdateBoardView();
-            // Board.FlipPieces(row, col, CurrentPlayer.Color);
+
             SwitchTurns();
             return true;
         }
@@ -145,7 +150,7 @@ namespace Othello.Models
             var boardState = Board.Cells; // Assuming Board.Cells is accessible
             _observer.DisplayBoard(boardState);
         }
-        
+
         private void NotifyPlayerTurn(Player player)
         {
             if (player is HumanPlayer)
@@ -174,6 +179,21 @@ namespace Othello.Models
             {
                 // It's a tie if scores are equal
                 Winner = null;
+            }
+        }
+
+        public void UndoMove()
+        {
+            if (moveHistory.Any())
+            {
+                Move lastMove = moveHistory.Pop();
+                Board.UndoMove(lastMove);
+
+                NotifyObservers(
+                    $"The last move {lastMove.Row + 1} {lastMove.Col + 1} was undo by player {OpponentPlayer.Color}");
+                UpdateBoardView();
+                SwitchTurns();
+                // Additional logic to revert the game state...
             }
         }
     }
