@@ -53,5 +53,5 @@ public class ConsoleView : IGameViewUpdater
 
 
     // Additional methods to interact with the user can be added here
-    // For example, displaying the board, showing error messages, etc.
+    
 }

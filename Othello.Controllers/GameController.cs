@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Othello.Controllers.Interfaces;
+﻿using Othello.Controllers.Interfaces;
 using Othello.Models;
 
 namespace Othello.Controllers
@@ -8,6 +7,7 @@ namespace Othello.Controllers
     {
         private readonly Game _game;
         private readonly IConsoleInputController _inputController;
+        private CancellationTokenSource _undoCancellationTokenSource = null!;
 
         public GameController(Game game, IConsoleInputController inputController)
         {
@@ -18,29 +18,28 @@ namespace Othello.Controllers
         public async Task StartGame()
         {
             _game.Start();
-            Stopwatch stopwatch = new Stopwatch();
 
             while (!_game.IsGameOver)
             {
                 var currentPlayer = _game.CurrentPlayer;
-                // stopwatch.Restart();
-                // // After making a move (either by player or AI)
                 switch (currentPlayer)
                 {
                     // Check the type of the current player to decide on the move source
                     case HumanPlayer:
                         var move = _inputController.GetMoveInput();
                         _game.MakeMove(move.Item1 - 1, move.Item2 - 1);
-                        stopwatch.Restart();
-                        if (stopwatch.ElapsedMilliseconds <= 3000)
+                        _undoCancellationTokenSource = new CancellationTokenSource();
+
+                        // Start listening for undo in a non-blocking way
+                        var undoTask = WaitForUndoRequest(_undoCancellationTokenSource.Token);
+
+                        // If undo was requested and no move was made by the opponent, undo the last move
+                        if (await Task.WhenAny(undoTask, Task.Delay(3000)) == undoTask && undoTask.Result)
                         {
-                            //Console.WriteLine("Move made. You have got 3 seconds to undo. \nPress 'U' to undo.");
-                            bool undoRequested = await WaitForUndoRequest(3000);
-                            if (undoRequested)
-                            {
-                                _game.UndoMove();
-                            }
+                            _game.UndoMove();
                         }
+
+                        await _undoCancellationTokenSource.CancelAsync(); // Cancel listening for undo requests
 
                         break;
                     case AIBot:
@@ -69,44 +68,24 @@ namespace Othello.Controllers
             Task.Delay(delay).Wait(); // Use await Task.Delay(delay) in async methods
         }
 
-        public async Task<bool> WaitForUndoRequest(int timeout)
+        public async Task<bool> WaitForUndoRequest(CancellationToken token)
         {
-            var cancellationTokenSource = new CancellationTokenSource();
-            var token = cancellationTokenSource.Token;
-
-            var undoTask = Task.Run(() =>
+            // Listen for 'U' key press to undo
+            while (!token.IsCancellationRequested)
             {
-                while (!token.IsCancellationRequested)
+                if (Console.KeyAvailable)
                 {
-                    if (Console.KeyAvailable)
+                    var key = Console.ReadKey(intercept: true).Key;
+                    if (key == ConsoleKey.U)
                     {
-                        var key = Console.ReadKey(true).Key;
-                        if (key == ConsoleKey.U) // Let 'U' be the undo command
-                        {
-                            return true;
-                        }
+                        return true; // Undo requested
                     }
                 }
 
-                return false;
-            }, token);
-
-            // Delay for the specified timeout
-            await Task.Delay(timeout, token).ContinueWith(t => { }, token);
-
-            // If we reach here, the delay has completed. Cancel the undoTask.
-            await cancellationTokenSource.CancelAsync();
-
-            try
-            {
-                // If the task completed with a result before cancellation, this will return the result.
-                return await undoTask;
+                await Task.Delay(100, token); // Polling delay to reduce CPU usage
             }
-            catch (TaskCanceledException)
-            {
-                // If the task was cancelled, treat it as no undo request.
-                return false;
-            }
+
+            return false; // No undo requested or cancellation token triggered
         }
     }
 }
