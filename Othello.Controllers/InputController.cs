@@ -34,7 +34,7 @@ namespace Othello.Controllers
                     if (Console.KeyAvailable)
                     {
                         var input = Console.ReadLine();
-                        if (input?.ToLower() == "hint")
+                        if (input?.ToLower() == "hints")
                         {
                             _inputTimer.Stop();
                             throw new HintRequestedException("Hint requested by the user.");

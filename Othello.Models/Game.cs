@@ -202,7 +202,7 @@ namespace Othello.Models
                 var move = bot.MakeMove(Board);
                 MakeMove(move.Item1, move.Item2);
                 UpdateBoardView();
-                NotifyObservers($"Random move {move.Item1} {move.Item2} was made due to timeout");
+                NotifyObservers($"Random move {move.Item1 + 1} {move.Item2 + 1} was made due to timeout");
             }
             catch (InvalidOperationException)
             {
