@@ -1,26 +1,43 @@
 ﻿using Othello.Controllers.Interfaces;
+using Othello.Models;
 
 namespace Othello.Controllers
 {
     public class InputController : IConsoleInputController
     {
-        public (int, int) GetMoveInput()
+        public async Task<(int, int)> GetMoveInputAsync()
         {
-            while (true)
-            {
-                //Console.WriteLine("Enter your move (row col): ");
-                var input = Console.ReadLine();
-                var parts = input?.Split();
+            var inputTask = Task.Run(Console.ReadLine);
+            var delayTask = Task.Delay(TimeSpan.FromSeconds(5));
+            var completedTask = await Task.WhenAny(inputTask, delayTask);
 
+            if (completedTask == inputTask)
+            {
+                string? input = await inputTask; // This is safe now.
+
+                if (string.Equals(input?.Trim(), "hint", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new HintRequestedException();
+                }
+
+                var parts = input?.Split();
                 if (parts is {Length: 2}
                     && int.TryParse(parts[0], out int row)
                     && int.TryParse(parts[1], out int col))
                 {
-                    return (row, col);
+                    return (row, col); // Adjusting for zero-based indexing is done by the caller.
                 }
-
-                Console.WriteLine("Invalid input, please try again.");
+                else
+                {
+                    Console.WriteLine("Invalid input, please try again.");
+                    return await GetMoveInputAsync(); // Recursive call for retry
+                }
             }
+            else
+            {
+                throw new MoveTimeoutException();
+            }
+
         }
 
         public string GetGameModeInput()
@@ -55,4 +72,6 @@ namespace Othello.Controllers
             }
         }
     }
+    public class HintRequestedException : Exception { }
+    public class MoveTimeoutException : Exception { }
 }

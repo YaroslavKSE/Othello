@@ -14,20 +14,34 @@ namespace Othello.Controllers
             _inputController = inputController;
         }
 
-        public void StartGame()
+        public async Task StartGame()
         {
             _game.Start();
 
             while (!_game.IsGameOver)
             {
                 var currentPlayer = _game.CurrentPlayer;
+                CancellationTokenSource cts = new CancellationTokenSource();
 
                 switch (currentPlayer)
                 {
                     // Check the type of the current player to decide on the move source
                     case HumanPlayer:
-                        var move = _inputController.GetMoveInput();
-                        _game.MakeMove(move.Item1 - 1, move.Item2 - 1);
+                        try
+                        {
+                            var move = await _inputController.GetMoveInputAsync();
+                            _game.MakeMove(move.Item1 - 1, move.Item2 - 1);
+                        }
+                        catch (HintRequestedException)
+                        {
+                            _game.ShowHints();
+                            continue; 
+                        }
+                        catch (MoveTimeoutException)
+                        {
+                            _game.PerformRandomMove();
+                        }
+                        
                         break;
                     case AIBot:
                         // For AIBot, the move is generated within the MakeMove method itself
