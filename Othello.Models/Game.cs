@@ -34,6 +34,12 @@ namespace Othello.Models
 
         public bool MakeMove(int row, int col)
         {
+            if (row < 0 || row > 7 || col < 0 || col > 7)
+            {
+                NotifyObservers("Move is outside the board boundaries");
+                return false;
+            }
+            
             if (!Board.IsValidMove(row, col, CurrentPlayer.Color))
             {
                 NotifyObservers("Invalid move, try again");
@@ -42,14 +48,19 @@ namespace Othello.Models
 
             Board.MakeMove(row, col, CurrentPlayer.Color);
             UpdateBoardView();
-            // Board.FlipPieces(row, col, CurrentPlayer.Color);
             SwitchTurns();
             return true;
         }
 
         private void SwitchTurns()
         {
+            
             (CurrentPlayer, OpponentPlayer) = (OpponentPlayer, CurrentPlayer);
+            if(!PlayerCanMove(CurrentPlayer))
+            {
+                NotifyObservers($"There is no move available for {CurrentPlayer} \n {CurrentPlayer} passes");
+                (CurrentPlayer, OpponentPlayer) = (OpponentPlayer, CurrentPlayer);
+            }
             NotifyPlayerTurn(CurrentPlayer);
         }
 
