@@ -147,6 +147,24 @@
             }
         }
 
+        public List<(int, int)>? GetAvailableMoves(CellState playerColor)
+        {
+            List<(int, int)>? validMoves = new List<(int, int)>();
+        
+            for (int row = 0; row < Size; row++)
+            {
+                for (int col = 0; col < Size; col++)
+                {
+                    if (IsValidMove(row, col, playerColor))
+                    {
+                        validMoves.Add((row, col));
+                    }
+                }
+            }
+
+            return validMoves;
+        }
+
         public List<(int, int)> CalculateFlips(int row, int col, CellState playerColor)
         {
             List<(int, int)> flippedPieces = new List<(int, int)>();

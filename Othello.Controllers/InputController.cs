@@ -1,26 +1,63 @@
-﻿using System.Text;
 using Othello.Controllers.Interfaces;
+using Timer = System.Timers.Timer;
 
 namespace Othello.Controllers
 {
     public class InputController : IConsoleInputController
     {
+        private const int MoveTimeoutInSeconds = 20;
+        private readonly Timer _inputTimer;
+        private CancellationTokenSource _cts;
+        
+        public InputController()
+        {
+            _inputTimer = new Timer(MoveTimeoutInSeconds * 1000); // Set the timer for 20 seconds
+            _inputTimer.Elapsed += (_, _) => OnTimerElapsed(); 
+            _cts = new CancellationTokenSource();
+            _inputTimer.AutoReset = false; // Run timer once per input
+        }
+
         public (int, int) GetMoveInput()
         {
-            while (true)
+            _inputTimer.Start(); // Start the timer
+
+            try
             {
-                //Console.WriteLine("Enter your move (row col): ");
-                var input = Console.ReadLine();
-                var parts = input?.Split();
-
-                if (parts is {Length: 2}
-                    && int.TryParse(parts[0], out int row)
-                    && int.TryParse(parts[1], out int col))
+                while (true)
                 {
-                    return (row, col);
-                }
+                    if (_cts.Token.IsCancellationRequested)
+                    {
+                        // Handle the timeout condition here, since exception won't work
+                        throw new MoveTimeoutException("Move input timeout occurred.");
+                    }
 
-                Console.WriteLine("Invalid input, please try again.");
+                    if (Console.KeyAvailable)
+                    {
+                        var input = Console.ReadLine();
+                        if (input?.ToLower() == "hints")
+                        {
+                            _inputTimer.Stop();
+                            throw new HintRequestedException("Hint requested by the user.");
+                        }
+
+                        var parts = input?.Split();
+                        if (parts is { Length: 2 }
+                            && int.TryParse(parts[0], out int row)
+                            && int.TryParse(parts[1], out int col))
+                        {
+                            _inputTimer.Stop(); // Valid move entered, stop the timer
+                            return (row, col);
+                        }
+                    }
+                    
+                    Thread.Sleep(100); // Reduce CPU usage
+                }
+            }
+            finally
+            {
+                _cts.Dispose(); // Clean up the CancellationTokenSource
+                _cts = new CancellationTokenSource(); // Reset for next input
+                _inputTimer.Start(); // Restart the timer for the next input
             }
         }
 
@@ -55,5 +92,15 @@ namespace Othello.Controllers
                 }
             }
         }
+
+        private void OnTimerElapsed()
+        {
+            _inputTimer.Stop(); // Ensure the timer is stopped
+            _cts.Cancel(); // Signal the cancellation
+        }
+        
+        public class MoveTimeoutException(string message) : Exception(message);
+
+        public class HintRequestedException(string message) : Exception(message);
     }
 }

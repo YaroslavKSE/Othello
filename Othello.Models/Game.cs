@@ -35,6 +35,12 @@ namespace Othello.Models
 
         public bool MakeMove(int row, int col)
         {
+            if (row < 0 || row > 7 || col < 0 || col > 7)
+            {
+                NotifyObservers("Move is outside the board boundaries");
+                return false;
+            }
+            
             if (!Board.IsValidMove(row, col, CurrentPlayer.Color))
             {
                 NotifyObservers("Invalid move, try again");
@@ -47,14 +53,19 @@ namespace Othello.Models
 
             Board.MakeMove(row, col, CurrentPlayer.Color);
             UpdateBoardView();
-
             SwitchTurns();
             return true;
         }
 
         private void SwitchTurns()
         {
+            
             (CurrentPlayer, OpponentPlayer) = (OpponentPlayer, CurrentPlayer);
+            if(!PlayerCanMove(CurrentPlayer))
+            {
+                NotifyObservers($"There is no move available for {CurrentPlayer} \n {CurrentPlayer} passes");
+                (CurrentPlayer, OpponentPlayer) = (OpponentPlayer, CurrentPlayer);
+            }
             NotifyPlayerTurn(CurrentPlayer);
         }
 
@@ -140,15 +151,15 @@ namespace Othello.Models
             return CurrentPlayer.Color == CellState.Black ? CurrentPlayer : OpponentPlayer;
         }
 
-        protected void NotifyObservers(string message)
+        private void NotifyObservers(string message)
         {
             _observer.Update(message);
         }
 
-        public void UpdateBoardView()
+        private void UpdateBoardView()
         {
             var boardState = Board.Cells; // Assuming Board.Cells is accessible
-            _observer.DisplayBoard(boardState);
+            _observer.DisplayBoard(boardState, null);
         }
 
         private void NotifyPlayerTurn(Player player)
@@ -179,6 +190,28 @@ namespace Othello.Models
             {
                 // It's a tie if scores are equal
                 Winner = null;
+            }
+        }
+
+        public void ShowHints()
+        {
+            var hints = Board.GetAvailableMoves(CurrentPlayer.Color);
+            _observer.DisplayBoard(Board.Cells, hints);
+        }
+
+        public void PerformRandomMove()
+        {
+            try
+            {
+                var bot = new AIBot(CurrentPlayer.Color);
+                var move = bot.MakeMove(Board);
+                MakeMove(move.Item1, move.Item2);
+                UpdateBoardView();
+                NotifyObservers($"Random move {move.Item1 + 1} {move.Item2 + 1} was made due to timeout");
+            }
+            catch (InvalidOperationException)
+            {
+                
             }
         }
 

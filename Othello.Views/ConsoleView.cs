@@ -9,9 +9,8 @@ public class ConsoleView : IGameViewUpdater
     {
         Console.WriteLine(message);
     }
-
-    // Update DisplayBoard to have a function as an argument, and then check if it null, then it will display regular board, if not display hints.
-    public void DisplayBoard(CellState[,] board)
+    
+    public void DisplayBoard(CellState[,] board, List<(int, int)>? hints)
     {
         int size = board.GetLength(0); // Assuming the board is square
 
@@ -35,7 +34,7 @@ public class ConsoleView : IGameViewUpdater
             for (int col = 0; col < size; col++)
             {
                 var cell = board[row, col];
-                char symbol = cell switch
+                char symbol = hints != null && hints.Contains((row, col)) ? '*' : cell switch
                 {
                     CellState.Black => 'B',
                     CellState.White => 'W',
@@ -50,8 +49,4 @@ public class ConsoleView : IGameViewUpdater
         Console.Write("    "); // Align with the board
         Console.WriteLine(new string('=', size * 3)); // Bottom border based on board size
     }
-
-
-    // Additional methods to interact with the user can be added here
-    
 }
