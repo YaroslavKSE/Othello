@@ -1,14 +1,13 @@
-﻿namespace Othello.Models
-{
-    public class HumanPlayer : Player
-    {
-        public HumanPlayer(CellState color) : base(color)
-        {
-        }
+﻿namespace Othello.Models;
 
-        public override (int, int) MakeMove(Board board)
-        {
-            throw new InvalidOperationException("HumanPlayer should not make moves directly.");
-        }
+public class HumanPlayer : Player
+{
+    public HumanPlayer(CellState color) : base(color)
+    {
+    }
+
+    public override (int, int) MakeMove(Board board)
+    {
+        throw new InvalidOperationException("HumanPlayer should not make moves directly.");
     }
 }

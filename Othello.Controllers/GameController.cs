@@ -1,69 +1,69 @@
 ﻿using Othello.Controllers.Interfaces;
 using Othello.Models;
 
-namespace Othello.Controllers
+namespace Othello.Controllers;
+
+public class GameController : IGameController
 {
-    public class GameController : IGameController
+    private readonly Game _game;
+    private readonly IConsoleInputController _inputController;
+
+    public GameController(Game game, IConsoleInputController inputController)
     {
-        private readonly Game _game;
-        private readonly IConsoleInputController _inputController;
-        
-        public GameController(Game game, IConsoleInputController inputController)
-        {
-            _game = game;
-            _inputController = inputController;
-        }
+        _game = game;
+        _inputController = inputController;
+    }
 
-        public void StartGame()
-        {
-            _game.Start();
+    public void StartGame()
+    {
+        _game.Start();
 
-            while (!_game.IsGameOver)
+        while (!_game.IsGameOver)
+        {
+            var currentPlayer = _game.CurrentPlayer;
+
+            try
             {
-                var currentPlayer = _game.CurrentPlayer;
-
-                try
+                switch (currentPlayer)
                 {
-                    switch (currentPlayer)
-                    {
-                        case HumanPlayer:
-                            var move = _inputController.GetMoveInput();
-                            _game.MakeMove(move.Item1 - 1, move.Item2 - 1);
-                            break;
-                        case AIBot:
-                            SimulateAiDelay();
-                            var (row, col) = currentPlayer.MakeMove(_game.Board);
-                            _game.MakeMove(row, col);
-                            break;
-                    }
-                }
-                catch (InputController.MoveTimeoutException)
-                {
-                    _game.PerformRandomMove();
-                }
-                catch (InputController.HintRequestedException)
-                {
-                    // Handle hint request (show hint or make a hint move)
-                    _game.ShowHints();
-                }
-
-                if (_game.CheckGameOver())
-                {
-                    _game.EndGame();
-                    Console.WriteLine("Game Over");
-                    // Optionally, display the score or winner here
-                    return;
+                    case HumanPlayer:
+                        var move = _inputController.GetMoveInput();
+                        _game.MakeMove(move.Item1 - 1, move.Item2 - 1);
+                        break;
+                    case AIBot:
+                        SimulateAiDelay();
+                        var (row, col) = currentPlayer.MakeMove(_game.Board);
+                        _game.MakeMove(row, col);
+                        break;
                 }
             }
-        }
+            catch (InputController.MoveTimeoutException)
+            {
+                _game.PerformRandomMove();
+            }
+            catch (InputController.HintRequestedException)
+            {
+                _game.ShowHints();
+            }
+            catch (InputController.UndoRequestedException)
+            {
+                _game.UndoMove();
+            }
 
-        public void SimulateAiDelay()
-        {
-            // Introduce a random delay between 1 and 3 seconds
-            Random rand = new Random();
-            int delay = rand.Next(1000, 3001); // Milliseconds
-            // Console.WriteLine("AI is thinking...");
-            Task.Delay(delay).Wait(); // Use await Task.Delay(delay) in async methods
+            if (_game.CheckGameOver())
+            {
+                _game.EndGame();
+                return;
+            }
         }
+    }
+
+    public void SimulateAiDelay()
+    {
+        // Introduce a random delay between 1 and 3 seconds
+        var rand = new Random();
+        var delay = rand.Next(1000, 3001); // Milliseconds
+        // Console.WriteLine("AI is thinking...");
+        Task.Delay(delay).Wait(); // Use await Task.Delay(delay) in async methods
     }
 }

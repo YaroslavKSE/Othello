@@ -1,19 +1,20 @@
-﻿namespace Othello.Models
+﻿namespace Othello.Models;
+
+public class Move
 {
-    public class Move
+    public int Row { get; private set; }
+    public int Col { get; private set; }
+    public CellState PlayerColor { get; private set; }
+    public List<(int Row, int Col)> FlippedPieces { get; private set; }
+
+    public DateTime MoveTime { get; }
+
+    public Move(int row, int col, CellState playerColor, List<(int Row, int Col)>? flippedPieces)
     {
-        public int Row { get; private set; }
-        public int Col { get; private set; }
-        public CellState PlayerColor { get; private set; }
-
-        public Move(int row, int col, CellState playerColor)
-        {
-            Row = row;
-            Col = col;
-            PlayerColor = playerColor;
-        }
-
-        // Additional properties or methods for handling moves can be added here,
-        // such as a method to execute the move on a board.
+        Row = row;
+        Col = col;
+        PlayerColor = playerColor;
+        FlippedPieces = flippedPieces ?? new List<(int, int)>();
+        MoveTime = DateTime.Now;
     }
 }
