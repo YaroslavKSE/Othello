@@ -2,7 +2,6 @@
 
 public interface IGameController
 {
-    Task StartGame();
+    void StartGame();
     void SimulateAiDelay();
-    Task<bool> WaitForUndoRequest(CancellationToken token);
 }
