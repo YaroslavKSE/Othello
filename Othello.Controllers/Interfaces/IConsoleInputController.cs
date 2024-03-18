@@ -1,10 +1,8 @@
-﻿using Othello.Models;
-
-namespace Othello.Controllers.Interfaces;
+﻿namespace Othello.Controllers.Interfaces;
 
 public interface IConsoleInputController
 {
-    Task<(int, int)> GetMoveInputAsync();
+    (int, int) GetMoveInput();
     string GetGameModeInput();
     bool AskPlayAgain();
 }

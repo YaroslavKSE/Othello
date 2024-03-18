@@ -1,43 +1,64 @@
 ﻿using Othello.Controllers.Interfaces;
-using Othello.Models;
+using Timer = System.Timers.Timer;
 
 namespace Othello.Controllers
 {
     public class InputController : IConsoleInputController
     {
-        public async Task<(int, int)> GetMoveInputAsync()
+        private const int MoveTimeoutInSeconds = 20;
+        private readonly Timer _inputTimer;
+        private CancellationTokenSource _cts;
+        
+        public InputController()
         {
-            var inputTask = Task.Run(Console.ReadLine);
-            var delayTask = Task.Delay(TimeSpan.FromSeconds(5));
-            var completedTask = await Task.WhenAny(inputTask, delayTask);
+            _inputTimer = new Timer(MoveTimeoutInSeconds * 1000); // Set the timer for 20 seconds
+            _inputTimer.Elapsed += (_, _) => OnTimerElapsed(); 
+            _cts = new CancellationTokenSource();
+            _inputTimer.AutoReset = false; // Run timer once per input
+        }
 
-            if (completedTask == inputTask)
+        public (int, int) GetMoveInput()
+        {
+            _inputTimer.Start(); // Start the timer
+
+            try
             {
-                string? input = await inputTask; // This is safe now.
+                while (true)
+                {
+                    if (_cts.Token.IsCancellationRequested)
+                    {
+                        // Handle the timeout condition here, since exception won't work
+                        throw new MoveTimeoutException("Move input timeout occurred.");
+                    }
 
-                if (string.Equals(input?.Trim(), "hint", StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new HintRequestedException();
-                }
+                    if (Console.KeyAvailable)
+                    {
+                        var input = Console.ReadLine();
+                        if (input?.ToLower() == "hint")
+                        {
+                            _inputTimer.Stop();
+                            throw new HintRequestedException("Hint requested by the user.");
+                        }
 
-                var parts = input?.Split();
-                if (parts is {Length: 2}
-                    && int.TryParse(parts[0], out int row)
-                    && int.TryParse(parts[1], out int col))
-                {
-                    return (row, col); // Adjusting for zero-based indexing is done by the caller.
-                }
-                else
-                {
-                    Console.WriteLine("Invalid input, please try again.");
-                    return await GetMoveInputAsync(); // Recursive call for retry
+                        var parts = input?.Split();
+                        if (parts is { Length: 2 }
+                            && int.TryParse(parts[0], out int row)
+                            && int.TryParse(parts[1], out int col))
+                        {
+                            _inputTimer.Stop(); // Valid move entered, stop the timer
+                            return (row, col);
+                        }
+                    }
+                    
+                    Thread.Sleep(100); // Reduce CPU usage
                 }
             }
-            else
+            finally
             {
-                throw new MoveTimeoutException();
+                _cts.Dispose(); // Clean up the CancellationTokenSource
+                _cts = new CancellationTokenSource(); // Reset for next input
+                _inputTimer.Start(); // Restart the timer for the next input
             }
-
         }
 
         public string GetGameModeInput()
@@ -71,7 +92,15 @@ namespace Othello.Controllers
                 }
             }
         }
+
+        private void OnTimerElapsed()
+        {
+            _inputTimer.Stop(); // Ensure the timer is stopped
+            _cts.Cancel(); // Signal the cancellation
+        }
+        
+        public class MoveTimeoutException(string message) : Exception(message);
+
+        public class HintRequestedException(string message) : Exception(message);
     }
-    public class HintRequestedException : Exception { }
-    public class MoveTimeoutException : Exception { }
 }

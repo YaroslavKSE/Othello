@@ -185,11 +185,18 @@ namespace Othello.Models
 
         public void PerformRandomMove()
         {
-            var bot = new AIBot(CurrentPlayer.Color);
-            var move = bot.MakeMove(Board);
-            MakeMove(move.Item1, move.Item2);
-            UpdateBoardView();
-            NotifyObservers($"Random move {move.Item1} {move.Item2} was made due to timeout");
+            try
+            {
+                var bot = new AIBot(CurrentPlayer.Color);
+                var move = bot.MakeMove(Board);
+                MakeMove(move.Item1, move.Item2);
+                UpdateBoardView();
+                NotifyObservers($"Random move {move.Item1} {move.Item2} was made due to timeout");
+            }
+            catch (InvalidOperationException)
+            {
+                
+            }
         }
     }
 }
