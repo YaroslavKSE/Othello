@@ -2,7 +2,7 @@
 
 namespace Othello.Tests;
 
-public class FlipPiecesUnitTests
+public class BoardFlipPiecesUnitTests
 {
     [Fact]
     public void FlipPieces_ValidMove_FlipsCorrectPieces()

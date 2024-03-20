@@ -63,7 +63,6 @@ public class GameController : IGameController
         // Introduce a random delay between 1 and 3 seconds
         var rand = new Random();
         var delay = rand.Next(1000, 3001); // Milliseconds
-        // Console.WriteLine("AI is thinking...");
-        Task.Delay(delay).Wait(); // Use await Task.Delay(delay) in async methods
+        Task.Delay(delay);
     }
 }

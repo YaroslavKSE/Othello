@@ -1,12 +1,14 @@
-﻿namespace Othello.Models;
+﻿using System;
+using System.Threading.Tasks;
+
+namespace Othello.Models;
 
 public class AIBot : Player
 {
     public AIBot(CellState color) : base(color)
     {
     }
-
-    // The AIBot autonomously chooses a valid move.
+    
     public override (int, int) MakeMove(Board board)
     {
         for (var row = 0; row < board.Size; row++)

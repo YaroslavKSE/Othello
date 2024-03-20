@@ -8,7 +8,7 @@ public class Game
     public Player CurrentPlayer { get; private set; }
     private Player OpponentPlayer { get; set; }
     public bool IsGameOver { get; private set; }
-    private Player Winner { get; set; }
+    public Player Winner { get; private set; }
 
     private readonly IGameViewUpdater _observer;
 
@@ -69,7 +69,7 @@ public class Game
         NotifyPlayerTurn(CurrentPlayer);
     }
 
-    private Dictionary<CellState, int> CalculateScore()
+    public Dictionary<CellState, int> CalculateScore()
     {
         var score = new Dictionary<CellState, int>
         {

@@ -2,7 +2,7 @@ using Othello.Models;
 
 namespace Othello.Tests;
 
-public class IsValidMoveUnitTests
+public class BoardIsValidMoveUnitTests
 {
     [Fact]
     public void IsValidMoveReturnsTrueIfBlackGoes_X2_Y4_When_GameIsStarted()

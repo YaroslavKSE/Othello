@@ -2,7 +2,7 @@
 
 namespace Othello.Tests;
 
-public class MakeMoveUnitTests
+public class BoardMakeMoveUnitTests
 {
     [Fact]
     public void MakeMove_UpdatesBoard_When_Black_Makes_ValidMove()
