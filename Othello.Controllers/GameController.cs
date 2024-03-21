@@ -36,16 +36,12 @@ public class GameController : IGameController
                         var undoRequested = false;
                         while (!aiMoveTask.IsCompleted)
                         {
-                            if (Console.KeyAvailable)
+                            if (_inputController.UndoKeyPressed())
                             {
-                                var key = Console.ReadKey(intercept: true);
-                                if (key.Key == ConsoleKey.U) // Assuming 'U' is the undo command
-                                {
-                                    undoRequested = true;
-                                    _game.UndoMove();
-                                }
+                                undoRequested = true;
+                                _game.UndoMove();
                             }
-
+                            
                             // Sleep to reduce CPU usage
                             await Task.Delay(100);
                         }

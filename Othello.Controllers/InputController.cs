@@ -90,6 +90,21 @@ public class InputController : IConsoleInputController
         }
     }
 
+    public bool UndoKeyPressed()
+    {
+        if (Console.KeyAvailable)
+        {
+            var key = Console.ReadKey(intercept: true);
+            if (key.Key == ConsoleKey.U) 
+            {
+                return true;
+            }
+        }
+
+        return false;
+    } 
+    
+
     private void OnTimerElapsed()
     {
         _inputTimer.Stop(); // Ensure the timer is stopped
