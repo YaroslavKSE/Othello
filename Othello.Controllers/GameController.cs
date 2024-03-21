@@ -14,7 +14,7 @@ public class GameController : IGameController
         _inputController = inputController;
     }
 
-    public void StartGame()
+    public async Task StartGame()
     {
         _game.Start();
 
@@ -31,9 +31,32 @@ public class GameController : IGameController
                         _game.MakeMove(move.Item1 - 1, move.Item2 - 1);
                         break;
                     case AIBot:
-                        SimulateAiDelay();
-                        var (row, col) = currentPlayer.MakeMove(_game.Board);
-                        _game.MakeMove(row, col);
+                        // Start AI move in a separate task
+                        var aiMoveTask = currentPlayer.MakeMoveAsync(_game.Board);
+                        var undoRequested = false;
+                        while (!aiMoveTask.IsCompleted)
+                        {
+                            if (Console.KeyAvailable)
+                            {
+                                var key = Console.ReadKey(intercept: true);
+                                if (key.Key == ConsoleKey.U) // Assuming 'U' is the undo command
+                                {
+                                    undoRequested = true;
+                                    _game.UndoMove();
+                                }
+                            }
+
+                            // Sleep to reduce CPU usage
+                            await Task.Delay(100);
+                        }
+
+                        if (undoRequested == false)
+                        {                        
+                            await aiMoveTask; // Ensure AI move is completed
+                            var (row, col) = aiMoveTask.Result;
+                            _game.MakeMove(row, col);
+                            
+                        }
                         break;
                 }
             }

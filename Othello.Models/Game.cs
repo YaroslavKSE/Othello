@@ -178,7 +178,7 @@ public class Game
         try
         {
             var bot = new AIBot(CurrentPlayer.Color);
-            var move = bot.MakeMove(Board);
+            var move = bot.MakeMoveAsync(Board).Result;
             MakeMove(move.Item1, move.Item2);
             UpdateBoardView();
             NotifyObservers($"Random move {move.Item1 + 1} {move.Item2 + 1} was made due to timeout");

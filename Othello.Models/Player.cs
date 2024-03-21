@@ -12,5 +12,5 @@ public abstract class Player
     }
 
     // Abstract method for making a move, to be implemented by subclasses
-    public abstract (int, int) MakeMove(Board board);
+    public abstract Task<(int, int)> MakeMoveAsync(Board board);
 }
