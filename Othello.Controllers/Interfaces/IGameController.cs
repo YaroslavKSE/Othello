@@ -3,5 +3,4 @@
 public interface IGameController
 {
     Task StartGame();
-    void SimulateAiDelay();
 }

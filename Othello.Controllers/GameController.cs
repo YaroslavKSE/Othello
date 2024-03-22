@@ -76,12 +76,4 @@ public class GameController : IGameController
             }
         }
     }
-
-    public void SimulateAiDelay()
-    {
-        // Introduce a random delay between 1 and 3 seconds
-        var rand = new Random();
-        var delay = rand.Next(1000, 3001); // Milliseconds
-        Task.Delay(delay);
-    }
 }
