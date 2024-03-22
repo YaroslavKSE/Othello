@@ -6,7 +6,7 @@ public class HumanPlayer : Player
     {
     }
 
-    public override (int, int) MakeMove(Board board)
+    public override Task<(int, int)> MakeMoveAsync(Board board)
     {
         throw new InvalidOperationException("HumanPlayer should not make moves directly.");
     }
