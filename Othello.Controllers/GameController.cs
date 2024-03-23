@@ -24,37 +24,7 @@ public class GameController : IGameController
 
             try
             {
-                switch (currentPlayer)
-                {
-                    case HumanPlayer:
-                        var move = _inputController.GetMoveInput();
-                        _game.MakeMove(move.Item1 - 1, move.Item2 - 1);
-                        break;
-                    case AIBot:
-                        // Start AI move in a separate task
-                        var aiMoveTask = currentPlayer.MakeMoveAsync(_game.Board);
-                        var undoRequested = false;
-                        while (!aiMoveTask.IsCompleted)
-                        {
-                            if (_inputController.UndoKeyPressed())
-                            {
-                                undoRequested = true;
-                                _game.UndoMove();
-                            }
-                            
-                            // Sleep to reduce CPU usage
-                            await Task.Delay(100);
-                        }
-
-                        if (undoRequested == false)
-                        {                        
-                            await aiMoveTask; // Ensure AI move is completed
-                            var (row, col) = aiMoveTask.Result;
-                            _game.MakeMove(row, col);
-                            
-                        }
-                        break;
-                }
+                await currentPlayer.MakeMoveAsync(_game);
             }
             catch (InputController.MoveTimeoutException)
             {

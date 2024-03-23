@@ -1,7 +1,11 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\areog\AppData\Local\JetBrains\Rider2023.3\resharper-host\temp\Rider\vAny\CoverageData\_Othello.1878849116\Snapshot\snapshot.utdcvr</s:String>
-	
-	
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f24eb1db_002D2518_002D44a9_002D98c5_002D93fe09b57040/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="IsValidMoveReturnsTrueIfBlackGoes_X2_Y4_When_GameIsStarted" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=317292b8_002Dfbc4_002D4db9_002D86cd_002Dc659141cb7d9/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="CheckGameOver_WhenNoMovesAvailable_ReturnsTrue" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Project Location="D:\C#\Othello\Othello.Tests" Presentation="&amp;lt;Othello.Tests&amp;gt;" /&gt;&#xD;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b799703b_002D1dcb_002D40c8_002D9f1c_002Dd13c7501243d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="GameTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Project Location="D:\C#\Othello\Othello.Tests" Presentation="&amp;lt;Othello.Tests&amp;gt;" /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	
+	
+	</wpf:ResourceDictionary>

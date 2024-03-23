@@ -13,7 +13,7 @@ public class BoardMakeMoveUnitTests
         var playerColor = CellState.Black;
 
         // Act
-        board.MakeMove(2, 4, playerColor); // A valid move in an initial Othello board
+        board.MarkCell(2, 4, playerColor); // A valid move in an initial Othello board
 
         // Assert
         Assert.NotEqual(initialColor, board.Cells[3, 4]);
@@ -28,7 +28,7 @@ public class BoardMakeMoveUnitTests
         var playerColor = CellState.Black;
 
         // Act & Assert
-        Assert.Throws<InvalidOperationException>(() => board.MakeMove(0, 0, playerColor));
+        Assert.Throws<InvalidOperationException>(() => board.MarkCell(0, 0, playerColor));
     }
     // Add more tests as needed to cover various scenarios and edge cases,
     // such as making moves on the edge of the board, making moves that don't flip any pieces, etc.

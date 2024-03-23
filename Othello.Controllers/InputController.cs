@@ -1,9 +1,11 @@
+using System.Diagnostics;
 using Othello.Controllers.Interfaces;
+using Othello.Models.Interfaces;
 using Timer = System.Timers.Timer;
 
 namespace Othello.Controllers;
 
-public class InputController : IConsoleInputController
+public class InputController : IConsoleInputController, IPlayerInputGetter, IUndoRequestListener
 {
     private const int MoveTimeoutInSeconds = 20;
     private readonly Timer _inputTimer;
@@ -41,7 +43,7 @@ public class InputController : IConsoleInputController
                     if (input?.ToLower() == "undo")
                     {
                         _inputTimer.Stop();
-                        throw new UndoRequestedException("Hint requested by the user.");
+                        throw new UndoRequestedException("Undo requested by the user.");
                     }
 
                     var parts = input?.Split();
@@ -90,20 +92,23 @@ public class InputController : IConsoleInputController
         }
     }
 
-    public bool UndoKeyPressed()
+    public async Task<bool> UndoKeyPressedAsync(CancellationToken cancellationToken)
     {
-        if (Console.KeyAvailable)
+        while (!cancellationToken.IsCancellationRequested)
         {
-            var key = Console.ReadKey(intercept: true);
-            if (key.Key == ConsoleKey.U) 
+            if (Console.KeyAvailable)
             {
-                return true;
+                var key = Console.ReadKey(true);
+                if (key.Key == ConsoleKey.U) return true;
             }
+
+            await Task.Delay(100, cancellationToken);
         }
 
+        // If we reach this point, it's because the operation was cancelled
         return false;
-    } 
-    
+    }
+
 
     private void OnTimerElapsed()
     {

@@ -1,4 +1,5 @@
 ﻿using Moq;
+using Othello.Controllers;
 using Othello.Models;
 using Othello.Models.Interfaces;
 
@@ -11,8 +12,9 @@ public class GameTests
     public void Start_InitializesGameCorrectly()
     {
         var mockObserver = new Mock<IGameViewUpdater>();
-        var player1 = new HumanPlayer(CellState.Black);
-        var player2 = new HumanPlayer(CellState.White);
+        var inputGetter = new InputController();
+        var player1 = new HumanPlayer(CellState.Black, inputGetter);
+        var player2 = new HumanPlayer(CellState.White, inputGetter);
 
         var game = new Game(player1, player2, mockObserver.Object);
 
@@ -27,8 +29,9 @@ public class GameTests
     public void MakeMove_ValidMove_ReturnsTrue()
     {
         var mockObserver = new Mock<IGameViewUpdater>();
-        var player1 = new HumanPlayer(CellState.Black);
-        var player2 = new HumanPlayer(CellState.White);
+        var inputGetter = new InputController();
+        var player1 = new HumanPlayer(CellState.Black, inputGetter);
+        var player2 = new HumanPlayer(CellState.White, inputGetter);
         var game = new Game(player1, player2, mockObserver.Object);
 
         game.Start();
@@ -44,8 +47,9 @@ public class GameTests
     {
         var mockObserver = new Mock<IGameViewUpdater>();
         // Setup your players and game instance
-        var player1 = new HumanPlayer(CellState.Black);
-        var player2 = new HumanPlayer(CellState.White);
+        var inputGetter = new InputController();
+        var player1 = new HumanPlayer(CellState.Black, inputGetter);
+        var player2 = new HumanPlayer(CellState.White, inputGetter);
         var game = new Game(player1, player2, mockObserver.Object);
 
         game.Start();
@@ -64,25 +68,27 @@ public class GameTests
     {
         var mockObserver = new Mock<IGameViewUpdater>();
         // Setup your players and game instance
-        var player1 = new HumanPlayer(CellState.Black);
-        var player2 = new AIBot(CellState.White);
+        var inputGetter = new InputController();
+        var player1 = new HumanPlayer(CellState.Black, inputGetter);
+        var player2 = new HumanPlayer(CellState.White, inputGetter);
         var game = new Game(player1, player2, mockObserver.Object);
 
         // You might need to manipulate
         game.Start();
-        
+
         var isGameOver = game.CheckGameOver();
 
         Assert.False(isGameOver);
     }
-    
+
     [Fact]
     public void CalculateScore_AtGameStart_ReturnsCorrectInitialScores()
     {
         // Arrange
         var mockObserver = new Mock<IGameViewUpdater>();
-        var player1 = new HumanPlayer(CellState.Black);
-        var player2 = new HumanPlayer(CellState.White);
+        var inputGetter = new InputController();
+        var player1 = new HumanPlayer(CellState.Black, inputGetter);
+        var player2 = new HumanPlayer(CellState.White, inputGetter);
         var game = new Game(player1, player2, mockObserver.Object);
 
         // The initial setup is part of the Game constructor which includes the Board initialization
@@ -96,13 +102,15 @@ public class GameTests
         Assert.Equal(2, score[CellState.Black]);
         Assert.Equal(2, score[CellState.White]);
     }
+
     [Fact]
     public void ShowHints_DisplaysAvailableMoves()
     {
         // Arrange
         var mockObserver = new Mock<IGameViewUpdater>();
-        var player1 = new HumanPlayer(CellState.Black);
-        var player2 = new HumanPlayer(CellState.White);
+        var inputGetter = new InputController();
+        var player1 = new HumanPlayer(CellState.Black, inputGetter);
+        var player2 = new HumanPlayer(CellState.White, inputGetter);
         var game = new Game(player1, player2, mockObserver.Object);
 
         // Mock the expected behavior if necessary. For example, if your game setup depends on it.
@@ -120,8 +128,9 @@ public class GameTests
     {
         // Arrange
         var mockObserver = new Mock<IGameViewUpdater>();
-        var player1 = new AIBot(CellState.Black); // Assuming AIBot can be used here for simplicity
-        var player2 = new HumanPlayer(CellState.White);
+        var inputGetter = new InputController();
+        var player1 = new HumanPlayer(CellState.Black, inputGetter);
+        var player2 = new HumanPlayer(CellState.White, inputGetter);
         var game = new Game(player1, player2, mockObserver.Object);
 
         // Act
@@ -130,8 +139,7 @@ public class GameTests
         // Assert
         // Verify that a move was made. 
         mockObserver.Verify(x => x.Update(It.Is<string>(s => s.Contains("Random move"))), Times.Once);
-
     }
-    
+
     // Add more tests as needed...
 }

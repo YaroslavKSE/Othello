@@ -1,13 +1,25 @@
-﻿namespace Othello.Models;
+﻿using Othello.Models.Interfaces;
+
+namespace Othello.Models;
 
 public class HumanPlayer : Player
 {
-    public HumanPlayer(CellState color) : base(color)
+    public HumanPlayer(CellState color, IPlayerInputGetter inputGetter) : base(color)
     {
+        _inputGetter = inputGetter;
     }
 
-    public override Task<(int, int)> MakeMoveAsync(Board board)
+    private readonly IPlayerInputGetter _inputGetter;
+
+    public override Task MakeMoveAsync(Game gameBoard)
     {
-        throw new InvalidOperationException("HumanPlayer should not make moves directly.");
+        var (row, col) = _inputGetter.GetMoveInput();
+        gameBoard.MakeMove(row - 1, col - 1);
+        return Task.CompletedTask;
+    }
+
+    public override string GetTurnMessageNotification()
+    {
+        return $"Player {Color}'s turn. Please enter your move (row col):";
     }
 }

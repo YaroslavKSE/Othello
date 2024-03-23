@@ -43,7 +43,7 @@ public class Board
         (1, -1), (1, 0), (1, 1) // Lower row
     };
 
-    public void MakeMove(int x, int y, CellState playerColor)
+    public void MarkCell(int x, int y, CellState playerColor)
     {
         if (x < 0 || x >= Size || y < 0 || y >= Size)
             throw new ArgumentOutOfRangeException("Move is outside the board boundaries.");

@@ -8,7 +8,7 @@ public class Game
     public Player CurrentPlayer { get; private set; }
     private Player OpponentPlayer { get; set; }
     public bool IsGameOver { get; private set; }
-    public Player Winner { get; private set; }
+    private Player Winner { get; set; }
 
     private readonly IGameViewUpdater _observer;
 
@@ -51,7 +51,7 @@ public class Game
         var flippedPieces = Board.CalculateFlips(row, col, CurrentPlayer.Color);
         _moveHistory.Push(new Move(row, col, CurrentPlayer.Color, flippedPieces));
 
-        Board.MakeMove(row, col, CurrentPlayer.Color);
+        Board.MarkCell(row, col, CurrentPlayer.Color);
         UpdateBoardView();
         SwitchTurns();
         return true;
@@ -113,7 +113,6 @@ public class Game
 
     public void EndGame()
     {
-        IsGameOver = true;
         DetermineWinner(); // Determine the winner before constructing the game over message
 
         var finalScore = CalculateScore();
@@ -142,17 +141,13 @@ public class Game
 
     private void UpdateBoardView()
     {
-        var boardState = Board.Cells; // Assuming Board.Cells is accessible
+        var boardState = Board.Cells;
         _observer.DisplayBoard(boardState, null);
     }
 
     private void NotifyPlayerTurn(Player player)
     {
-        if (player is HumanPlayer)
-            NotifyObservers($"Player {player.Color}'s turn. Please enter your move (row col):");
-        else if (player is AIBot)
-            // No need for input prompt message for AI Bot. Optionally, notify about AI thinking.
-            NotifyObservers($"AI Bot {player.Color}'s turn...");
+        NotifyObservers(player.GetTurnMessageNotification());
     }
 
     private void DetermineWinner()
@@ -175,16 +170,16 @@ public class Game
 
     public void PerformRandomMove()
     {
-        try
+        var availableMoves = Board.GetAvailableMoves(CurrentPlayer.Color);
+        var r = new Random();
+        if (availableMoves != null)
         {
-            var bot = new AIBot(CurrentPlayer.Color);
-            var move = bot.MakeMoveAsync(Board).Result;
-            MakeMove(move.Item1, move.Item2);
+            var randomInteger = r.Next(0, availableMoves.Count);
+            var randomMove = availableMoves[randomInteger];
+            MakeMove(randomMove.Item1, randomMove.Item2);
             UpdateBoardView();
-            NotifyObservers($"Random move {move.Item1 + 1} {move.Item2 + 1} was made due to timeout");
-        }
-        catch (InvalidOperationException)
-        {
+            NotifyObservers($"Random move {randomMove.Item1 + 1} {randomMove.Item2 + 1} " +
+                            $"was made due to timeout");
         }
     }
 
@@ -205,6 +200,7 @@ public class Game
 
                 NotifyObservers($"Undo successful. It's now {CurrentPlayer.Color}'s turn again.");
                 UpdateBoardView();
+                NotifyPlayerTurn(CurrentPlayer);
             }
             else
             {
