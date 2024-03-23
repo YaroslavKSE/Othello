@@ -31,7 +31,7 @@ while (playAgain)
     var game = new Game(player1, player2, view);
 
     // Create the game controller
-    var gameController = new GameController(game, inputController);
+    var gameController = new GameController(game);
 
     // Start the game loop
     await gameController.StartGame();

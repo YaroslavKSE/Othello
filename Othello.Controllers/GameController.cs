@@ -6,12 +6,10 @@ namespace Othello.Controllers;
 public class GameController : IGameController
 {
     private readonly Game _game;
-    private readonly IConsoleInputController _inputController;
 
-    public GameController(Game game, IConsoleInputController inputController)
+    public GameController(Game game)
     {
         _game = game;
-        _inputController = inputController;
     }
 
     public async Task StartGame()
