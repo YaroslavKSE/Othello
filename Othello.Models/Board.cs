@@ -22,7 +22,7 @@ public class Board
         InitializeBoard();
     }
 
-    public void InitializeBoard()
+    private void InitializeBoard()
     {
         for (var i = 0; i < Size; i++)
         for (var j = 0; j < Size; j++)

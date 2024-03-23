@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Othello.Controllers.Interfaces;
 using Othello.Models.Interfaces;
 using Timer = System.Timers.Timer;
